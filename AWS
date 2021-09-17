@@ -1,0 +1,109 @@
+내가 구매한 컴퓨터에 접속방법
+1. aws접속
+2. git Bash 에서 입력
+    1) mac: sudo chmod 400 kepaire(드래그 넣기) > enter > mac계정 비밀번호 입력
+    2) window + mac: ssh -i kepaire(드래그 넣기) ubuntu@퍼블릭IPv4 주소 입력(aws에서 확인) > yes
+    3)ubuntu@ip-172-31-36-201:~$ -> 이런식으로 나올시 접속 완료
+
+git Bash 명령어 정리
+mkdir sparta -> sparta라는 이름의 폴더 생성
+ls -> 폴더 확인
+cd sparta -> sparta라는 폴더로 들어가기
+
+cd .. -> 현재 폴더에서 나가기
+python3 test.py -> test.py를 파이썬 3버전을 통해 실행 git Bash 에서 시켜준다
+pip install name -> 필요한 기능 설치
+
+
+FileZilla 켜기
+왼쪽 위 파일 아래 아이콘 클릭
+new site 클릭 -> 이름 짓기 -> 프로토콜: SFTP로 설정 -> 호스트: 퍼블릭IPv4 주소 입력(aws에서 확인) ->
+포트: 22 -> 로그온 유형: 키파일 -> 사용자: ubuntu -> 키파일: 저장한 키파일 가져오기 (모든 파일 보기 -> ~~.pem) -> 연결
+
+
+서버 세팅하기 자동
+1. 파일 다운(크롬에서 다운받기) 파일명:initial_ec2.sh
+    https://s3.ap-northeast-2.amazonaws.com/materials.spartacodingclub.kr/web101/week5/initial_ec2.sh
+2. FileZilla에서 다운받은 파일 내 서버의 폴더로 드래그해서 옮겨놓기
+3. git Bash로 해당 파일이 저장되어있는 서버의 폴더에서 권한 변경(다음 입력)
+    ls -> 폴더 확인
+    cd name -> 폴더에 들어가기
+    sudo chmod 755 initial_ec2.sh -> 권한 변경
+    ./initial_ec2.sh -> 설치
+
+서버 환경 혼자 세팅 ....궂이?
+1. 한국 시간 세팅  : EC2 컴퓨터의 시간대를 한국으로 맞추는 명령어
+    sudo ln -sf /usr/share/zoneinfo/Asia/Seoul /etc/localtime
+2.파이썬(python3 -> python)  : python3 명령어를 python으로 사용 할 수 있게 하는 명령어
+    sudo update-alternatives --install /usr/bin/python python /usr/bin/python3 10
+3. pip(pip3 -> pip)
+    1) pip3 설치
+        sudo apt-get update
+        sudo apt-get install -y python3-pip
+    2) pip3 대신 pip 라고 입력하기 위한 명령어
+        sudo update-alternatives --install /usr/bin/pip pip /usr/bin/pip3 1
+4. mongoDB 설치 코드 순서
+    wget -qO - https://www.mongodb.org/static/pgp/server-4.2.asc | sudo apt-key add -
+    echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu bionic/mongodb-org/4.2 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-4.2.list
+    sudo apt-get update
+    sudo apt-get install -y mongodb-org
+5. mongoDB 실행하기
+    # 실행. 아무 반응이 없으면, 잘 실행된 것!
+    # 리눅스는 보통 잘 되면 아무것도 안나와요!^^;
+    sudo service mongod start
+6. mongoDB 접속 계정 생성하기
+    mongo
+    (좌측에 '>' 표시가 나오면 성공적으로 MongoDB에 접속한 것입니다! 다음 명령어를 순차적으로 입력해주세요.
+    test, test 자리에 내가 넣고 싶은 아이디/비밀번호를 넣으면 됩니다. (영어로..!))
+    # admin으로 계정 바꾸기
+    use admin;
+    # 계정 생성하기
+    db.createUser({user: "test", pwd: "test", roles:["root"]});
+    # 완료시
+    Successfully added user : ~~~
+    # 나오기
+    exit
+    # MongoDB 재시작
+    sudo service mongod restart
+
+서버 접속 방법
+    주소창에 퍼블릭IPv4 주소 :5000 입력(aws에서 확인) 접속 안됨
+    aws 사이트 접속
+    내 EC2 선택
+    보안 에서 보안 그룹의 링크 클릭
+    인바운드 규칙 편집 클릭
+    다음들 추가 해준다
+        규칙 추가
+        1) 포트 범위: 5000, 소스 : Anywhere-IPv4 or 위치 무관 설정
+        2) 포트 범위: 80, 소스 : Anywhere-IPv4 or 위치 무관 설정 -> http의 기본 포트
+        3) 포트 범위: 5000, 소스 : Anywhere-IPv4 or 위치 무관 설정 -> mongoDB
+    주소창에 퍼블릭IPv4 주소 :5000 입력(aws에서 확인) 접속 확인
+    서버 들어오기 완료!
+
+서버 돌리는 법
+    서버에 올라가있는 app.py를 동작 시킨다.
+    git Bash에서 app.py 동작 시키면 된다.
+    종료 : CTRL + C
+
+포트 워딩
+    http 포트 80 포트로 들어오는 것을 5000포트로 변환
+    ```bash
+    sudo iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 80 -j REDIRECT --to-port 5000
+    ```
+
+git bash 를 켜 놓지 않아도 계속 app.py 돌리는 방법
+    해당 폴더에서 다음 입력(ubuntu@ip-172-31-36-201:~/sparta$ nohup python app.py &)
+    nohup python app.py &
+
+끄는 법
+    ps -ef | grep 'app.py' 입력 (ubuntu@ip-172-31-36-201:~/sparta$ ps -ef | grep 'app.py')
+
+    ubuntu   20590     1  0 12:52 ?        00:00:00 python app.py
+    ubuntu   20600 20590  0 12:52 ?        00:00:01 /usr/bin/python /home/ubuntu/sparta/app.py
+    ubuntu   20726 20698  0 12:55 pts/0    00:00:00 grep --color=auto app.py
+
+ubuntu 중에서 위에 두개 끄기
+    ubuntu@ip-172-31-36-201:~/sparta$ kill -9 20590
+    ubuntu@ip-172-31-36-201:~/sparta$ kill -9 20600
+
+

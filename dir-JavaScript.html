@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Title</title>
+
+    <!--javascript(함수 만들기)-->
+        <script>
+            function hey(){
+                alert('안녕!'); <- 경고창
+            }
+        </script>
+
+        변수 지정해 주기 (숫자형, 문자형)
+        -> let a = 3 or 'str'   ---tip) 변수 명은 first_name 같이 '_'표시 등 과 함께 알아 보기 쉽게 만든다.
+
+        자료형
+        리스트
+        let a_list = ['수박','참외','배']
+        -> a_list.push('감')
+        -> a_list = ['수박','참외','배','감']
+
+        딕셔너리(리스트 추가 가능)
+        let a_dict = {'name':'yu','age':7}
+        -> a_dict["height"]=200
+        -> a_dict = {'name':'yu','age':26,'height':200}
+
+        함수 기본형 (정해진 동작을 하는것)
+        function sum(num1, num2){
+            return num1+num2
+        }
+
+        조건문(==,and:&&, or:||)
+        let age = 23
+        if (age > 20){
+            alert('성인입니다.')
+        }
+        else if (age>7){
+            alert('청소년입니다.')
+        }
+        else{
+            alert('어린이입니다.')
+        }
+
+        반복문
+        for (let i = 0; i < 10; i++){
+            print(i)
+        }
+        let scores = [
+            {'name':'철수', 'score':90},
+            {'name':'영희', 'score':85},
+            {'name':'민수', 'score':70},
+          {'name':'형준', 'score':50},
+          {'name':'기남', 'score':68},
+          {'name':'동희', 'score':30},
+        ]
+        for(let i=0; i <scores.length; i++){
+            console.log(scores[i]['name'])
+        }
+
+        for(let i=0; i <scores.length; i++){
+            let name = scores[i]['name']
+            let score = scores[i]['score']
+            if(score <70 ){
+                console.log(name,score)
+            }
+        }
+    </head>
+    <body>
+        <div onclick="hey()">아무 문구</div>
+    </body>
+</html>

@@ -1,0 +1,52 @@
+1. jQuery
+    ->미리 작성된 JavaScript 코드(남이짜둔)
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    //부트 스트랩 템플릿으로 사용할시 이미 포함되어 있으므로 따로 적어주지 않아도 된다.
+
+    $('#id 값').val(); <- 값 읽어오기
+    $('#id 값').val('이후의 값'); <- 값 바꾸기
+    $('#id 값').hide(); <- 숨기기
+    $('#id 값').show(); <- 보이기
+    $('#id 값').css(읽어올 style 속성); <- 해당 css값 읽어오기
+    $('#id 값').css(변경할 style 속성, 변경 값); <- css편집
+    $('#id 값').text('유후') <- text 값 변경
+    $('#id 값').empty() <- 비우기
+    $('#img_id 값').attr("src", img_url); <- url image 변경
+    $('#id').append(temp_html) <- 값 추가
+
+    let temp_html = `<button>나는 버튼이다</button>` <- 변수 넣어줄 때는 ${} 여기 안에 넣는다
+    $('#id').append(temp_html) <- #id 값 구역 안에 temp_html 추가(추가 되는건 뭐든 상관없는듯)
+
+2. Ajax
+    GET -> 통상적으로 데이터 조회(Read)를 요청할때 예)영화목록 조회
+  - 기본 골격
+    $.ajax({
+      type: "GET",
+      url: "여기에URL을입력",
+      data: {},
+      success: function(response){
+        console.log(response)
+      }
+    })
+
+  - Ajax 활용 예시
+    $.ajax({
+      type: "GET",
+      url: "http://openapi.seoul.go.kr:8088/6d4d776b466c656533356a4b4b5872/json/RealtimeCityAir/1/99",
+      data: {},
+      success: function(response){
+        let rows = response['RealtimeCityAir']['row']
+        for (let i = 0; i < rows.length; i++){
+            let gu_name = rows[i]['MSRSTE_NM']
+            let gu_mise = rows[i]['IDEX_MVL']
+            if (gu_mise < 70){
+                console.log(gu_name,gu_mise)
+            }
+          }
+      }
+    })
+
+  - 로딩 되자마자 동작
+    $(document).ready(function(){
+        alert('다 로딩됐다!')
+    });
