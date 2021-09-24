@@ -15,7 +15,6 @@
     soup = BeautifulSoup(data.text, 'html.parser')
 
     title = soup.select_one('경로 copy > copy selector')
-
     title = soup.select_one('경로').text  # -> 출력에서 text만 가져온다.
     title = soup.select_one('경로')['href']  # -> href 값을 가져온다. (다른것도 가능)
     title = soup.select('경로')  # -> 리스트 형식으로 가져온다(여러개 가져옴)
